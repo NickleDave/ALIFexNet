@@ -1,3 +1,10 @@
+import os
+from pathlib import Path
+
+import nengo_extras.data
+from nengo_extras.cuda_convnet import load_model_pickle
+
+
 REPO_LOCAL_PATH = Path(os.getcwd())
 
 # layers, weights, etc.
