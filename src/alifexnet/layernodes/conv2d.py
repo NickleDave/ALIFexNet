@@ -1,5 +1,7 @@
+from nengo_dl.tensor_node import reshaped
+
 import tensorflow as tf
-from tensorflow.keras.layers import Conv2d
+from tensorflow.keras.layers import Conv2D
 
 
 class Conv2DNode:
@@ -34,8 +36,7 @@ class Conv2DNode:
             any other valid keyword argument to tensorflow.keras.layers.Conv2D
         """
         # compute shape used to reshape inputs within __call__ method
-        image_shape = (input_size, input_size, n_channels)
-        self.input_shape = (-1,) + image_shape
+        self.shape_in = (input_size, input_size, n_channels)
 
         # make actual layer
         self.conv2d = Conv2D(filters=filters,
@@ -44,7 +45,7 @@ class Conv2DNode:
                              padding=padding,
                              **conv2d_kwargs)
 
-        # make weights/biases attribute for loading during post_build
+        # set weights/biases attributes for loading during post_build
         self.weights = weights
         self.biases = biases
 
@@ -52,10 +53,11 @@ class Conv2DNode:
         pass
 
     def __call__(self, t, x):
-        # reshape flattened inputs into 2D shape
-        # (plus batch dimension)
-        inputs = tf.reshape(x, )
-        return self.conv2d(images)
+        batch_size = x.get_shape()[0].value
+        x = tf.reshape(x, (batch_size,) + self.shape_in)
+        x = self.conv2d(x)
+        x = tf.reshape(x, (batch_size, -1))
+        return x
 
     def post_build(self, sess, rng):
         """loads weights and biases (if any)"""
