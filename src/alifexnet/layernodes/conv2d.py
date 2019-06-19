@@ -1,5 +1,3 @@
-from nengo_dl.tensor_node import reshaped
-
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D
 
@@ -29,9 +27,8 @@ class Conv2DNode:
             size of one side of kernels in Conv2D layer (assumes square)
         strides : int
             size of strides in Conv2D layer
-        padding : int
-            size of padding. Currently only accepts 0, i.e., the 'valid'
-            option for padding in keras.layers.Conv2D
+        padding : str
+            Type of padding to use. One of {'valid', 'same'}.
         conv2d_kwargs : kwargs
             any other valid keyword argument to tensorflow.keras.layers.Conv2D
         """
